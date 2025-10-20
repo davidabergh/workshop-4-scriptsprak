@@ -32,6 +32,8 @@ Sort-Object Name |
 ForEach-Object { "{0,-8} {1,5}" -f $_.Name, $_.Count } |
 Out-String
 
+# Last changed files within 7 days
+
 $recent = $files |
 Where-Object { $_.LastWriteTime -ge $weekAgo -and $_.LastWriteTime -le $now } |
 Sort-Object LastWriteTime -Descending
@@ -39,9 +41,7 @@ Sort-Object LastWriteTime -Descending
 $recentBytes = ($recent | Measure-Object Length -Sum).Sum
 $recentMB = [math]::Round($recentBytes / 1MB, 2)
 
-$recent = $files |
-Where-Object { $_.LastWriteTime -ge $weekAgo -and $_.LastWriteTime -le $now } |
-Sort-Object LastWriteTime -Descending
+
 
 $recentTable = if ($recent) {
     $recent | Select-Object Name,
@@ -51,7 +51,7 @@ $recentTable = if ($recent) {
     Format-Table -AutoSize | Out-String
 }
 else {
-    "Inga filer ändrade i perioden ($weekAgoStr – $nowStr)."
+    "Inga filer ändrade i perioden ($weekAgoStr – $nowStr)."  # This came to use since there's been no change this week
 }
 
 # Starting the report string here to separate it from the script as a whole
