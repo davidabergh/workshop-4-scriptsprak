@@ -51,7 +51,7 @@ $recentTable = if ($recent) {
     Format-Table -AutoSize | Out-String
 }
 else {
-    "Inga filer ändrade i perioden ($weekAgoStr – $nowStr)."  # This came to use since there's been no change this week
+    "Inga filer ändrade i perioden ($weekAgoStr  $nowStr)."  # This came to use since there's been no change this week
 }
 
 # Starting the report string here to separate it from the script as a whole

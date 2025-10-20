@@ -35,6 +35,6 @@ RT-LAGER-01.conf               0,60 2025-10-19 13:56:15 routers
 
 Nyligen ändrade (senaste 7 d): 
 -------------------------------
-Inga filer ändrade i perioden (2024-10-07 00:00 – 2024-10-14 00:00).
+Inga filer ändrade i perioden (2024-10-07 00:00  2024-10-14 00:00).
 
 
