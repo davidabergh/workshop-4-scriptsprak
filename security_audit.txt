@@ -1,6 +1,7 @@
 NETWORK CONFIGS REPORT
 ======================
-Exportdatum : 2025-10-20 16:03
+Exportdatum : 2024-10-14 00:00
+Period (7 d)  : från 2024-10-07 00:00 till 2024-10-14 00:00
 Rot         : network_configs
 Antal filer : 14
 Total storlek: 0.01 MB
@@ -29,5 +30,11 @@ SW-ACCESS-01.conf              0,50 2025-10-19 13:56:15 switches
 RT-EDGE-02.conf                0,60 2025-10-19 13:56:15 routers
 RT-EDGE-01.conf                0,80 2025-10-19 13:56:15 routers
 RT-LAGER-01.conf               0,60 2025-10-19 13:56:15 routers
+
+
+
+Nyligen ändrade (senaste 7 d): 
+-------------------------------
+Inga filer ändrade i perioden (2024-10-07 00:00 – 2024-10-14 00:00).
 
 
