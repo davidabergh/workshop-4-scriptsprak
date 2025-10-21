@@ -4,6 +4,23 @@ $Root = "network_configs"
 # Getting the info from files
 $files = Get-ChildItem -Path $Root -Recurse -File -Include *.conf, *.rules, *.log
 
+
+# This will adjust LastWriteTime from the filenames so the dates will be correct
+foreach ($f in $files) {
+    if ($f.Extension -in '.conf', '.rules') {
+        $line = Get-Content $f.FullName -TotalCount 10 | Select-String 'Last modified:'
+        if ($line) {
+            $dateText = $line -replace '.*Last modified:\s*', ''
+            $date = [datetime]::Parse($dateText)
+            [System.IO.File]::SetLastWriteTime($f.FullName, $date)
+        }
+    }
+    elseif ($f.Extension -eq '.log' -and $f.BaseName -match '\d{4}-\d{2}-\d{2}') {
+        $date = [datetime]::Parse("$($matches[0]) 00:00:00")
+        [System.IO.File]::SetLastWriteTime($f.FullName, $date)
+    }
+}
+
 # Counting the last week for these statistics
 $now = [datetime]'2024-10-14'
 $weekAgo = $now.AddDays(-7)
