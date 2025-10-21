@@ -11,6 +11,17 @@ Per filtillägg:
 .log         5
 .rules       2
 
+
+Per filtyp (antal + total storlek):
+
+Name   AntalFiler TotalStorlek(MB)
+----   ---------- ----------------
+.conf           7             0,00
+.log            5             0,01
+.rules          2             0,00
+
+
+
 Detaljer:
 ---------
 
@@ -49,5 +60,16 @@ SW-CORE-02.conf                0,60 2024-10-09 09:15:30 switches
 RT-LAGER-01.conf               0,60 2024-10-08 11:20:15 routers
 
 
+
+Största loggfiler (topp 5):
+---------------------------
+
+Name                    Storlek(MB) Mapp
+----                    ----------- ----
+security-2024-10-13.log 0,0013      logs
+access-2024-10-14.log   0,0013      logs
+system-2024-10-14.log   0,0012      logs
+security-2024-10-14.log 0,0012      logs
+system-2024-10-13.log   0,0010      logs
 
 

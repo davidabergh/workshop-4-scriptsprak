@@ -68,8 +68,27 @@ $recentTable = if ($recent) {
     Format-Table -AutoSize | Out-String
 }
 else {
-    "Inga filer ändrade i perioden ($weekAgoStr  $nowStr)."  # This came to use since there's been no change this week
+    "Inga filer ändrade i perioden ($weekAgoStr  $nowStr)."  # This came to use the first time since I didn't adjust LastWriteTime
 }
+
+# Grouping all the file types per extension and sizes
+
+$perType = $files |
+Group-Object Extension |
+Select-Object Name,
+@{n = 'AntalFiler'; e = { $_.Count } },
+@{n = 'TotalStorlek(MB)'; e = { [math]::Round( ($_.Group | Measure-Object Length -Sum).Sum / 1MB, 2) } } |
+Format-Table -AutoSize | Out-String
+
+# Calculating top 5 biggest logfiles
+$largestLogs =
+$files |
+Where-Object { $_.Extension -eq '.log' } |
+Sort-Object Length -Descending |            # Sorted by bytes
+Select-Object -First 5 Name,
+@{n = 'Storlek(MB)'; e = { '{0:N4}' -f ($_.Length / 1MB) } }, # Added 2 extra decimals since these files are very small
+@{n = 'Mapp'; e = { $_.Directory.Name } } |
+Format-Table -AutoSize | Out-String
 
 # Starting the report string here to separate it from the script as a whole
 $report = @"
@@ -83,6 +102,10 @@ Total storlek: $totalMB MB
 
 Per filtillägg:
 $perExt
+
+Per filtyp (antal + total storlek):
+$perType
+
 Detaljer:
 ---------
 $detailTable
@@ -91,7 +114,9 @@ Nyligen ändrade (senaste 7 d):
 -------------------------------
 $recentTable
 
-
+Största loggfiler (topp 5):
+---------------------------
+$largestLogs
 "@
 
 
