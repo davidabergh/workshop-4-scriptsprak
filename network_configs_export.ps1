@@ -86,9 +86,60 @@ $files |
 Where-Object { $_.Extension -eq '.log' } |
 Sort-Object Length -Descending |            # Sorted by bytes
 Select-Object -First 5 Name,
-@{n = 'Storlek(MB)'; e = { '{0:N4}' -f ($_.Length / 1MB) } }, # Added 2 extra decimals since these files are very small
+@{n = 'Storlek(MB)'; e = { '{0:N4}' -f ($_.Length / 1MB) } }, # 0:N4 Added 2 extra decimals since these files are very small
 @{n = 'Mapp'; e = { $_.Directory.Name } } |
 Format-Table -AutoSize | Out-String
+
+
+#Finding all the IP-addresses in the conf. files
+$ips = $files |
+Where-Object { $_.Extension -eq '.conf' } |
+Select-String -Pattern '\b\d{1,3}(\.\d{1,3}){3}\b' -AllMatches | # \b\d{1,3}(\.\d{1,3}){3}\b This means 4 groups of 1-3 numbers, separated with dots like an IP address
+ForEach-Object { $_.Matches.Value } |
+Sort-Object -Unique
+
+$ips = $ips |
+ForEach-Object { $_.Trim() } |
+Where-Object { $_ -notmatch '^(0\.0\.0\.0|255\.255\.255\.252|255\.255\.255\.0)$' } #This line removes unecessary IP addresses that are unique but not worthy of listing
+
+$ipList = if ($ips) {
+    $ips | ForEach-Object { " - $_" } | Out-String   # One row per IP like a list
+}
+else {
+    "Inga IP-adresser hittades i .conf-filer."
+}
+
+# Keywords to search for in .log files (security-related). Used by Select-String; matching is case-insensitive.
+$patterns = 'ERROR', 'FAILED', 'DENIED'
+
+$errorsPerFile =
+$files |
+Where-Object { $_.Extension -eq '.log' } |
+Select-String -Pattern ($patterns -join '|') -AllMatches -CaseSensitive:$false |
+ForEach-Object {
+    # Expanding all the matches not just the rows
+    foreach ($m in $_.Matches) { $_.Path }
+} |
+Group-Object |
+Select-Object @{n = 'Fil'; e = { Split-Path $_.Name -Leaf } }, # Just shows the file name
+@{n = 'Träffar'; e = { $_.Count } } |
+Sort-Object Träffar -Descending
+
+$errorsPerFileText = if ($errorsPerFile) {
+    $errorsPerFile | Format-Table -AutoSize | Out-String
+}
+else {
+    "Inga träffar på ERROR/FAILED/DENIED i loggfilerna."
+}
+
+
+
+
+
+
+
+
+
 
 # Starting the report string here to separate it from the script as a whole
 $report = @"
@@ -117,6 +168,16 @@ $recentTable
 Största loggfiler (topp 5):
 ---------------------------
 $largestLogs
+
+IP-adresser från .conf-filer:
+-----------------------------
+$ipList
+
+Säkerhetsvarningar i loggarna: 
+------------------------------
+$errorsPerFileText
+
+
 "@
 
 
