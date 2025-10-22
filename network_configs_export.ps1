@@ -115,7 +115,7 @@ $patterns = 'ERROR', 'FAILED', 'DENIED'
 $errorsPerFile =
 $files |
 Where-Object { $_.Extension -eq '.log' } |
-Select-String -Pattern ($patterns -join '|') -AllMatches -CaseSensitive:$false |
+Select-String -Pattern ($patterns -join '|') -AllMatches -CaseSensitive:$false | # Makes sure for example ”error”, ”Error”, ”ERROR” counts
 ForEach-Object {
     # Expanding all the matches not just the rows
     foreach ($m in $_.Matches) { $_.Path }
