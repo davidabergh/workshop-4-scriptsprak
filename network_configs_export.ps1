@@ -133,6 +133,23 @@ else {
 }
 
 
+# This is not for the txt report, this is everything we put out to config_inventory.csv
+
+# The root we go from
+$rootPath = (Resolve-Path $Root).Path   
+
+# Building the inventory list
+$inventory = $files | Where-Object { $_.Extension -in '.conf', '.rules', '.log' } |
+Select-Object `
+@{n = 'Name'; e = { $_.Name } },
+@{n = 'Path'; e = { [System.IO.Path]::GetRelativePath($rootPath, $_.FullName) } },
+@{n = 'SizeBytes'; e = { $_.Length } },
+@{n = 'Last changed'; e = { $_.LastWriteTime } }
+
+# Export the csv file
+$csvPath = Join-Path $Root 'config_inventory.csv'
+$inventory | Export-Csv $csvPath -NoTypeInformation -Encoding UTF8
+
 
 
 
